@@ -1,0 +1,71 @@
+{
+  "type": "Collection",
+  "id": "SoilGrids",
+  "stac_version": "1.0.0",
+  "description": "SoilGridsTM (hereafter SoilGrids) is a system for global digital soil mapping that makes use of global soil profile information and covariate data to model the spatial distribution of soil properties across the globe. SoilGrids is a collections of soil property maps for the world produced using machine learning at 250 m resolution.",
+  "links": [
+    {
+      "rel": "root",
+      "href": "./test",
+      "type": "application/json"
+    },
+    {
+      "rel": "license",
+      "href": "https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)",
+      "title": "GNU General Public License v3 (GPL-3)"
+    },
+    {
+      "rel": "cite-as",
+      "href": "https://doi.org/10.5194/soil-7-217-2021"
+    },
+    {
+      "rel": "self",
+      "href": "/home/paudley/Source/Work/SparkGeo/soilgrids/test",
+      "type": "application/json"
+    }
+  ],
+  "stac_extensions": [
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json"
+  ],
+  "sci:doi": "10.5194/soil-7-217-2021",
+  "sci:citation": "Poggio, L., de Sousa, L. M., Batjes, N. H., Heuvelink, G. B. M., Kempen, B., Ribeiro, E., and Rossiter, D.: SoilGrids 2.0: producing soil information for the globe with quantified spatial uncertainty, SOIL, 7, 217\u2013240, 2021.",
+  "title": "ISRIC SoilGrids Global Soil Property Maps",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          96.0,
+          -44.0,
+          168.0,
+          -9.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2021-01-01T00:00:00Z",
+          null
+        ]
+      ]
+    }
+  },
+  "license": "GPL3",
+  "providers": [
+    {
+      "name": "ISRIC \u2014 World Soil Information",
+      "roles": [
+        "producer",
+        "processor",
+        "host"
+      ],
+      "url": "https://www.isric.org/explore/soilgrids"
+    }
+  ],
+  "summaries": {
+    "proj:epsg": [
+      152160
+    ]
+  }
+}

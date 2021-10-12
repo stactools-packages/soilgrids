@@ -1,9 +1,23 @@
 import logging
 from datetime import datetime, timezone
 
-from pystac import (Asset, CatalogType, Collection, Extent, Item, MediaType,
+from pystac import (Asset, CatalogType, Collection, Extent, Item, ItemCollection, MediaType,
                     Provider, ProviderRole, SpatialExtent, TemporalExtent)
 from pystac.extensions.projection import ProjectionExtension
+from pystac.extensions.item_assets import AssetDefinition, ItemAssetsExtension
+from pystac.extensions.projection import ProjectionExtension
+from pystac.extensions.raster import (
+    DataType,
+    RasterBand,
+    RasterExtension,
+    Sampling,
+)
+from pystac.extensions.scientific import ScientificExtension
+from stactools.soilgrids.constants import (SOILGRIDS_ID, SOILGRIDS_EPSG, SOILGRIDS_TITLE,
+                                           SOILGRIDS_DESCRIPTION, SOILGRIDS_PROVIDER, LICENSE,
+                                           LICENSE_LINK, SOILGRIDS_BOUNDING_BOX,
+                                           SOILGRIDS_START_YEAR, SOILGRIDS_END_YEAR,
+                                           DOI, CITATION, SOILGRIDS_CRS_WKT, TILE_GEOS, SOILGRIDS_TYPES)
 
 logger = logging.getLogger(__name__)
 
@@ -20,34 +34,41 @@ def create_collection() -> Collection:
     Returns:
         Collection: STAC Collection object
     """
-    providers = [
-        Provider(
-            name="The OS Community",
-            roles=[
-                ProviderRole.PRODUCER, ProviderRole.PROCESSOR,
-                ProviderRole.HOST
-            ],
-            url="https://github.com/stac-utils/stactools",
-        )
-    ]
+    providers = [SOILGRIDS_PROVIDER]
 
     # Time must be in UTC
-    demo_time = datetime.now(tz=timezone.utc)
+    start_time = datetime.strptime(SOILGRIDS_START_YEAR, '%Y')
 
     extent = Extent(
-        SpatialExtent([[-180., 90., 180., -90.]]),
-        TemporalExtent([demo_time, None]),
+        SpatialExtent([SOILGRIDS_BOUNDING_BOX]),
+        TemporalExtent([start_time, None]),
     )
 
     collection = Collection(
-        id="my-collection-id",
-        title="A dummy STAC Collection",
-        description="Used for demonstration purposes",
-        license="CC-0",
+        id=SOILGRIDS_ID,
+        title=SOILGRIDS_TITLE,
+        description=SOILGRIDS_DESCRIPTION,
+        license=LICENSE,
         providers=providers,
         extent=extent,
         catalog_type=CatalogType.RELATIVE_PUBLISHED,
     )
+
+    collection.add_link(LICENSE_LINK)
+    collection_proj = ProjectionExtension.summaries(collection, add_if_missing=True)
+    collection_proj.epsg = [SOILGRIDS_EPSG]
+    collection_proj.wkt2 = SOILGRIDS_CRS_WKT
+
+    collection_sci = ScientificExtension.ext(collection, add_if_missing=True)
+    collection_sci.doi = DOI
+    collection_sci.citation = CITATION
+
+    items=[]
+    for tile_id, tile_goes in TILE_GEOS.items():
+        tile_props={}
+        tile_item=Item(collection=collection, id=tile_id, geometry=tile_goes, bbox=tile_goes["coordinates"], datetime=start_time, properties=tile_props)
+        items.append(tile_item)
+    collection_items = ItemCollection(items=items)
 
     return collection
 
@@ -107,6 +128,6 @@ def create_item(asset_href: str) -> Item:
             roles=["data"],
             title="A dummy STAC Item COG",
         ),
-    )
+    )    
 
     return item
