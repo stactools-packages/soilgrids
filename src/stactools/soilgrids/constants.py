@@ -46,6 +46,21 @@ SOILGRIDS_TYPES={
     "bdod": "Bulk density of the fine earth fraction (cg/cm³)",
     "cec": "Cation Exchange Capacity of the soil (mmol(c)/kg)",
 }
+SOILGRIDS_DEPTHS={
+    "0-5cm": "Zero to 5cm Depth",
+    "5cm-15cm": "5cm to 15cm Depth",
+    "15cm-30cm": "15cm to 30cm Depth",
+    "30cm-60cm": "30cm to 60cm Depth",
+    "60cm-100cm": "60cm to 100cm Depth",
+    "100cm-200cm": "100cm to 200cm Depth",
+}
+SOILGRIDS_PROB={
+    "Q0.05": "",
+    "Q0.5": "",
+    "Q0.95": "",
+    "mean": "",
+    "uncertainty": "",
+}
 
 TILE_GEOS={
     "tileSG-000-019":{ "type": "Polygon", "coordinates": [ [ [ -100.1784749, 80.0767931 ], [ -100.1710257, 79.4033438 ], [ -97.2154039, 79.4033438 ], [ -97.0941175, 80.0767931 ], [ -100.1784749, 80.0767931 ] ] ] },
