@@ -4,18 +4,18 @@ from pystac import Link, Provider, ProviderRole
 
 SOILGRIDS_ID = "SoilGrids"
 SOILGRIDS_EPSG = 152160
-SOILGRIDS_CRS_WKT = """PROJCS["Homolosine", 
-    GEOGCS["WGS 84", 
-        DATUM["WGS_1984", 
-            SPHEROID["WGS 84",6378137,298.257223563, 
-                AUTHORITY["EPSG","7030"]], 
-   AUTHORITY["EPSG","6326"]], 
-        PRIMEM["Greenwich",0, 
-            AUTHORITY["EPSG","8901"]], 
-        UNIT["degree",0.0174532925199433, 
-            AUTHORITY["EPSG","9122"]], 
-        AUTHORITY["EPSG","4326"]], 
-    PROJECTION["Interrupted_Goode_Homolosine"], 
+SOILGRIDS_CRS_WKT = """PROJCS["Homolosine",
+    GEOGCS["WGS 84",
+        DATUM["WGS_1984",
+            SPHEROID["WGS 84",6378137,298.257223563,
+                AUTHORITY["EPSG","7030"]],
+   AUTHORITY["EPSG","6326"]],
+        PRIMEM["Greenwich",0,
+            AUTHORITY["EPSG","8901"]],
+        UNIT["degree",0.0174532925199433,
+            AUTHORITY["EPSG","9122"]],
+        AUTHORITY["EPSG","4326"]],
+    PROJECTION["Interrupted_Goode_Homolosine"],
     UNIT["Meter",1]]"""
 SOILGRIDS_TITLE = "ISRIC SoilGrids Global Soil Property Maps"
 LICENSE = "CC-BY-4.0"
@@ -29,7 +29,11 @@ SOILGRIDS_DESCRIPTION = """SoilGridsTM (hereafter SoilGrids) is a system for glo
 
 SOILGRIDS_PROVIDER = Provider(
     name="ISRIC — World Soil Information",
-    roles=[ProviderRole.PRODUCER, ProviderRole.PROCESSOR, ProviderRole.HOST],
+    roles=[
+        ProviderRole.HOST,
+        ProviderRole.PROCESSOR,
+        ProviderRole.PRODUCER,
+    ],
     url=
     "https://www.isric.org/explore/soilgrids")
 
@@ -42,25 +46,36 @@ CITATION = "Poggio, L., de Sousa, L. M., Batjes, N. H., Heuvelink, G. B. M., Kem
 
 #pH, soil organic carbon content, bulk density, coarse fragments content, sand content, silt content, clay content, cation exchange capacity (CEC), total nitrogen as well as soil organic carbon density and soil organic carbon stock
 
-SOILGRIDS_TYPES={
+SOIL_PROPERTIES = {
     "bdod": "Bulk density of the fine earth fraction (cg/cm³)",
-    "cec": "Cation Exchange Capacity of the soil (mmol(c)/kg)",
+    # "cec": "Cation Exchange Capacity of the soil (mmol(c)/kg)",
+    # "cfvo": "",
+    # "clay": "",
+    # "nitrogen": "",
+    # "ocd": "",
+    # "ocs": "",  # only 0-30cm
+    # "phh2o": "",
+    # "sand": "",
+    # "silt": "",
+    # "soc": "",
 }
-SOILGRIDS_DEPTHS={
+DEPTHS = {
     "0-5cm": "Zero to 5cm Depth",
-    "5cm-15cm": "5cm to 15cm Depth",
-    "15cm-30cm": "15cm to 30cm Depth",
-    "30cm-60cm": "30cm to 60cm Depth",
-    "60cm-100cm": "60cm to 100cm Depth",
-    "100cm-200cm": "100cm to 200cm Depth",
+    # "5-15cm": "5cm to 15cm Depth",
+    # "15-30cm": "15cm to 30cm Depth",
+    # "30-60cm": "30cm to 60cm Depth",
+    # "60-100cm": "60cm to 100cm Depth",
+    # "100-200cm": "100cm to 200cm Depth",
 }
-SOILGRIDS_PROB={
+PROBS = {
     "Q0.05": "",
-    "Q0.5": "",
-    "Q0.95": "",
-    "mean": "",
-    "uncertainty": "",
+    # "Q0.5": "",
+    # "Q0.95": "",
+    # "mean": "",
+    # "uncertainty": "",
 }
+
+TILING_PIXEL_SIZE = (10000, 10000)
 
 TILE_GEOS={
     "tileSG-000-019":{ "type": "Polygon", "coordinates": [ [ [ -100.1784749, 80.0767931 ], [ -100.1710257, 79.4033438 ], [ -97.2154039, 79.4033438 ], [ -97.0941175, 80.0767931 ], [ -100.1784749, 80.0767931 ] ] ] },
@@ -1190,4 +1205,3 @@ TILE_GEOS={
     "tileSG-032-029":{ "type": "Polygon", "coordinates": [ [ [ -64.3324316, -54.6466667 ], [ -64.3466087, -54.8552979 ], [ -63.8073894, -54.8552979 ], [ -63.7949711, -54.6466667 ], [ -64.3324316, -54.6466667 ] ] ] },
     "tileSG-032-033":{ "type": "Polygon", "coordinates": [ [ [ -38.2386265, -53.9811612 ], [ -37.9845665, -54.7335486 ], [ -35.8282867, -54.7335486 ], [ -36.1072304, -53.9811612 ], [ -38.2386265, -53.9811612 ] ] ] },
 }
-

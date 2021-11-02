@@ -1,10 +1,22 @@
 import logging
-from datetime import datetime, timezone
+import os
+from datetime import datetime
 
-from pystac import (Asset, CatalogType, Collection, Extent, Item, ItemCollection, MediaType,
-                    Provider, ProviderRole, SpatialExtent, TemporalExtent)
-from pystac.extensions.projection import ProjectionExtension
+from pystac import (
+    Asset,
+    CatalogType,
+    Collection,
+    Extent,
+    Item,
+    ItemCollection,
+    MediaType,
+    Provider,
+    ProviderRole,
+    SpatialExtent,
+    TemporalExtent,
+)
 from pystac.extensions.item_assets import AssetDefinition, ItemAssetsExtension
+from pystac.extensions.projection import ProjectionExtension
 from pystac.extensions.raster import (
     DataType,
     RasterBand,
@@ -12,18 +24,32 @@ from pystac.extensions.raster import (
     Sampling,
 )
 from pystac.extensions.scientific import ScientificExtension
-from stactools.soilgrids.constants import (SOILGRIDS_ID, SOILGRIDS_EPSG, SOILGRIDS_TITLE,
-                                           SOILGRIDS_DESCRIPTION, SOILGRIDS_PROVIDER, LICENSE,
-                                           LICENSE_LINK, SOILGRIDS_BOUNDING_BOX,
-                                           SOILGRIDS_START_YEAR, SOILGRIDS_END_YEAR,
-                                           DOI, CITATION, SOILGRIDS_CRS_WKT, TILE_GEOS,
-                                           SOILGRIDS_DEPTHS, SOILGRIDS_PROB, SOILGRIDS_TYPES)
+
+from stactools.soilgrids.constants import (
+    CITATION,
+    DEPTHS,
+    DOI,
+    LICENSE,
+    LICENSE_LINK,
+    PROBS,
+    SOIL_PROPERTIES,
+    SOILGRIDS_BOUNDING_BOX,
+    SOILGRIDS_CRS_WKT,
+    SOILGRIDS_DESCRIPTION,
+    SOILGRIDS_END_YEAR,
+    SOILGRIDS_EPSG,
+    SOILGRIDS_ID,
+    SOILGRIDS_PROVIDER,
+    SOILGRIDS_START_YEAR,
+    SOILGRIDS_TITLE,
+    TILE_GEOS,
+)
 
 logger = logging.getLogger(__name__)
 
 
 def create_collection() -> Collection:
-    """Create a STAC Collection using 
+    """Create a STAC Collection using
 
     This function includes logic to extract all relevant metadata from
     an asset describing the STAC collection and/or metadata coded into an
@@ -55,41 +81,46 @@ def create_collection() -> Collection:
     )
 
     collection.add_link(LICENSE_LINK)
-    collection_proj = ProjectionExtension.summaries(collection, add_if_missing=True)
+    collection_proj = ProjectionExtension.summaries(collection,
+                                                    add_if_missing=True)
     collection_proj.epsg = [SOILGRIDS_EPSG]
-    collection_proj.wkt2 = SOILGRIDS_CRS_WKT
 
     collection_sci = ScientificExtension.ext(collection, add_if_missing=True)
     collection_sci.doi = DOI
     collection_sci.citation = CITATION
 
-    items=[]
+    items = []
     for tile_id, tile_goes in TILE_GEOS.items():
-        tile_props={
+        tile_props = {
             "title": r"ISRIC Soilgrids Tile ID",
-            "href": f"https://www.isric.org/explore/soilgrid/tiles/{tile_id}.json",
+            "href":
+            f"https://www.isric.org/explore/soilgrid/tiles/{tile_id}.json",
         }
-        tile_item=Item(
-            id=tile_id,
-            geometry=tile_goes,
-            bbox=tile_goes["coordinates"],
-            datetime=start_time,
-            properties=tile_props)
-        for soil_type, soil_desc in SOILGRIDS_TYPES.items():
-            for depth, depth_desc in SOILGRIDS_DEPTHS.items():
-                for prob, prob_desc in SOILGRIDS_PROB.items():
-                    tile_item.add_asset(f"extent-{tile_id}-{depth}-{prob}", Asset(
-                        href="https://www.isric.org/explore/soilgrid/tiles/{tile_id}-{depth}-{prob}.COG",
-                        media_type=MediaType.COG,
-                        roles=["extent"],
-                        title=f"ISRIC Soilgrids {soil_desc}-{depth_desc}-{prob}: tile {tile_id}",
-                    ))
+        tile_item = Item(id=tile_id,
+                         geometry=tile_goes,
+                         bbox=tile_goes["coordinates"],
+                         datetime=start_time,
+                         properties=tile_props)
+        for soil_type, soil_desc in SOIL_PROPERTIES.items():
+            for depth, depth_desc in DEPTHS.items():
+                for prob, prob_desc in PROBS.items():
+                    tile_item.add_asset(
+                        f"extent-{tile_id}-{depth}-{prob}",
+                        Asset(
+                            href=
+                            "https://www.isric.org/explore/soilgrid/tiles/{tile_id}-{depth}-{prob}.COG",
+                            media_type=MediaType.COG,
+                            roles=["extent"],
+                            title=
+                            f"ISRIC Soilgrids {soil_desc}-{depth_desc}-{prob}: tile {tile_id}",
+                        ))
         print(tile_item)
         items.append(tile_item)
     col_items = ItemCollection(items=items)
     collection.add_items(col_items)
 
     return collection
+
 
 def create_item(asset_href: str) -> Item:
     """Create a STAC Item a given ISRIC Soilgrids TILE ID, DEPTH and PROB tuple or filename.
@@ -129,7 +160,8 @@ def create_item(asset_href: str) -> Item:
     end_datetime = end_datetime
 
     if asset_href is not None:
-        id = os.path.basename(asset_href).replace("_cog", "").replace(".tif", "")
+        id = os.path.basename(asset_href).replace("_cog",
+                                                  "").replace(".tif", "")
     else:
         id = title.replace(" ", "-")
     cog_geom = get_cog_geom(cog_access_href, metadata)
@@ -172,7 +204,7 @@ def create_item(asset_href: str) -> Item:
     if start_datetime and end_datetime:
         item.common_metadata.start_datetime = start_datetime
         item.common_metadata.end_datetime = end_datetime
-        
+
     item_projection = ProjectionExtension.ext(item, add_if_missing=True)
     item_projection.epsg = SOILGRIDS_EPSG
     item_projection.wkt2 = SOILGRIDS_CRS_WKT
@@ -180,5 +212,5 @@ def create_item(asset_href: str) -> Item:
         item_projection.bbox = cog_geom["cog_bbox"]
         item_projection.transform = cog_geom["transform"]
         item_projection.shape = cog_geom["shape"]
-        
+
     return item
