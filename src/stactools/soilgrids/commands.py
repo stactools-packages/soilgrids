@@ -1,8 +1,10 @@
 import logging
+import os
 
 import click
 
-from stactools.soilgrids import stac
+from stactools.soilgrids import cog, stac
+from stactools.soilgrids.constants import DATASET_ACCESS_URL
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +23,7 @@ def create_soilgrids_command(cli):
         short_help="Creates a STAC collection",
     )
     @click.argument("destination")
-    def create_collection_command(destination: str):
+    def create_collection_command(destination: str) -> None:
         """Creates a STAC Collection
 
         Args:
@@ -33,12 +35,10 @@ def create_soilgrids_command(cli):
 
         collection.save_object()
 
-        return None
-
     @soilgrids.command("create-item", short_help="Create a STAC item")
     @click.argument("source")
     @click.argument("destination")
-    def create_item_command(source: str, destination: str):
+    def create_item_command(source: str, destination: str) -> None:
         """Creates a STAC Item
 
         Args:
@@ -49,6 +49,47 @@ def create_soilgrids_command(cli):
 
         item.save_object(dest_href=destination)
 
-        return None
+    @soilgrids.command(
+        "create-full-collection",
+        short_help="Get all data files and create Items and Collection",
+    )
+    @click.option(
+        "-s",
+        "--source",
+        required=False,
+        help="URL or path to dataset",
+        default=DATASET_ACCESS_URL,
+    )
+    @click.option(
+        "-d",
+        "--destination",
+        required=True,
+        help="The output directory for the STAC json",
+    )
+    def create_full_collection(source: str, destination: str) -> None:
+        """Creates a STAC Collection and all of its Items and Assets
+        Args:
+            destination (str): Path for the STAC Collection
+        """
+        os.chdir(destination)
+        # collection = stac.create_monthly_collection()
+        # collection.normalize_hrefs("./")
+        # collection.save(dest_href="./")
+        cog.process_whole_dataset(source, "./")
+        # for file_name in glob("./*tmin*.tif"):
+        #     logger.info(f"Processing {file_name}")
+        #     id = stac.create_monthly_item(file_name).id
+        #     os.makedirs(id, exist_ok=True)
+        #     for data_var in MONTHLY_DATA_VARIABLES.keys():
+        #         var_file_name = file_name.replace("tmin", data_var)
+        #         shutil.move(var_file_name, os.path.join(id, var_file_name))
+        #     item = stac.create_monthly_item(os.path.join(id, file_name))
+        #     collection.add_item(item)
+        #     item.validate()
+        # logger.info("Saving collection")
+        # collection.normalize_hrefs("./")
+        # collection.make_all_asset_hrefs_relative()
+        # collection.save(dest_href="./")
+        # collection.validate()
 
     return soilgrids

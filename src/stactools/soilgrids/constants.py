@@ -25,6 +25,9 @@ LICENSE_LINK = Link(
     title="Creative Commons Attribution 4.0 International"
 )
 
+DATASET_URL = "https://files.isric.org/soilgrids/latest/data/"
+DATASET_ACCESS_URL = f"/vsicurl?max_retry=3&retry_delay=1&list_dir=no&url={DATASET_URL}"
+
 SOILGRIDS_DESCRIPTION = """SoilGridsTM (hereafter SoilGrids) is a system for global digital soil mapping that makes use of global soil profile information and covariate data to model the spatial distribution of soil properties across the globe. SoilGrids is a collections of soil property maps for the world produced using machine learning at 250 m resolution."""
 
 SOILGRIDS_PROVIDER = Provider(
