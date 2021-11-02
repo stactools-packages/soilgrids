@@ -18,11 +18,11 @@ SOILGRIDS_CRS_WKT = """PROJCS["Homolosine",
     PROJECTION["Interrupted_Goode_Homolosine"], 
     UNIT["Meter",1]]"""
 SOILGRIDS_TITLE = "ISRIC SoilGrids Global Soil Property Maps"
-LICENSE = "GPL3"
+LICENSE = "CC-BY-4.0"
 LICENSE_LINK = Link(
     rel="license",
-    target="https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)",
-    title="GNU General Public License v3 (GPL-3)"
+    target="https://creativecommons.org/licenses/by/4.0/",
+    title="Creative Commons Attribution 4.0 International"
 )
 
 SOILGRIDS_DESCRIPTION = """SoilGridsTM (hereafter SoilGrids) is a system for global digital soil mapping that makes use of global soil profile information and covariate data to model the spatial distribution of soil properties across the globe. SoilGrids is a collections of soil property maps for the world produced using machine learning at 250 m resolution."""
