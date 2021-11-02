@@ -1,8 +1,78 @@
 import logging
-
+import os
+from shutil import copy2
 from subprocess import CalledProcessError, check_output
+from tempfile import TemporaryDirectory
+
+import rasterio
+
+from stactools.soilgrids.constants import (
+    DEPTHS,
+    PROBS,
+    SOIL_PROPERTIES,
+    TILING_PIXEL_SIZE,
+)
 
 logger = logging.getLogger(__name__)
+
+
+def process_whole_dataset(source: str, output_directory: str) -> None:
+    with TemporaryDirectory() as tmp_dir:
+        for prop in SOIL_PROPERTIES.keys():
+            for depth in DEPTHS.keys():
+                for prob in PROBS.keys():
+                    file_name = f"{prop}/{prop}_{depth}_{prob}.vrt"
+                    create_tiled_cogs(os.path.join(source, file_name), tmp_dir)
+        for file in os.listdir(tmp_dir):
+            with rasterio.open(file, "r") as dataset:
+                if dataset.read().any():
+                    copy2(file, output_directory)
+
+
+def create_tiled_cogs(
+    input_file: str,
+    output_directory: str,
+) -> None:
+    """Split tiff into tiles and create COGs
+
+    Args:
+        input_path (str): Path to the soilgrids VRT file.
+        output_directory (str): The directory to which the COGs will be written.
+
+    Returns:
+        None
+    """
+    logger.info(f"Retiling {input_file}")
+    cmd = [
+        "gdal_retile.py",
+        "-ps",
+        str(TILING_PIXEL_SIZE[0]),
+        str(TILING_PIXEL_SIZE[1]),
+        "-of",
+        "COG",
+        "-co",
+        "NUM_THREADS=ALL_CPUS",
+        "-co",
+        "BLOCKSIZE=512",
+        "-co",
+        "COMPRESS=DEFLATE",
+        "-co",
+        "LEVEL=9",
+        "-co",
+        "PREDICTOR=YES",
+        "-co",
+        "OVERVIEWS=IGNORE_EXISTING",
+        "-targetDir",
+        output_directory,
+        input_file,
+    ]
+    try:
+        output = check_output(cmd)
+    except CalledProcessError as e:
+        output = e.output
+        raise
+    finally:
+        logger.info(f"output: {str(output)}")
 
 
 def create_cog(
