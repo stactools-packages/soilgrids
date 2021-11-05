@@ -1,6 +1,6 @@
 import logging
 import os
-from shutil import copy2
+import shutil
 from subprocess import CalledProcessError, check_output
 from tempfile import TemporaryDirectory
 
@@ -23,10 +23,18 @@ def process_whole_dataset(source: str, output_directory: str) -> None:
                 for prob in PROBS.keys():
                     file_name = f"{prop}/{prop}_{depth}_{prob}.vrt"
                     create_tiled_cogs(os.path.join(source, file_name), tmp_dir)
-        for file in os.listdir(tmp_dir):
-            with rasterio.open(file, "r") as dataset:
-                if dataset.read().any():
-                    copy2(file, output_directory)
+                    item_path = os.path.join(output_directory, f"{prop}_{depth}_{prob}")
+                    os.makedirs(item_path, exist_ok=True)
+                    logger.info(f"Moving assets to {item_path}")
+                    for file in os.listdir(tmp_dir):
+                        file_path = os.path.join(tmp_dir, file)
+                        with rasterio.open(file_path, "r") as dataset:
+                            if dataset.read().any():
+                                destination = os.path.join(
+                                        item_path,
+                                        file.replace(".vrt", ".tif"),
+                                )
+                                shutil.move(file_path, destination)
 
 
 def create_tiled_cogs(
