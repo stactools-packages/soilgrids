@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 def process_whole_dataset(source: str, output_directory: str) -> None:
-    with TemporaryDirectory() as tmp_dir:
-        for prop in SOIL_PROPERTIES.keys():
-            for depth in DEPTHS.keys():
-                for prob in PROBS.keys():
+    for prop in SOIL_PROPERTIES.keys():
+        for depth in DEPTHS.keys():
+            for prob in PROBS.keys():
+                with TemporaryDirectory() as tmp_dir:
                     file_name = f"{prop}/{prop}_{depth}_{prob}.vrt"
                     create_tiled_cogs(os.path.join(source, file_name), tmp_dir)
                     item_path = os.path.join(output_directory, f"{prop}_{depth}_{prob}")
