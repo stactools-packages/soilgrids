@@ -3,10 +3,9 @@ import os
 from typing import List
 
 import click
-from soilgrids.src.stactools.soilgrids.constants import SOIL_PROPERTIES
 
 from stactools.soilgrids import cog, stac
-from stactools.soilgrids.constants import DATASET_ACCESS_URL
+from stactools.soilgrids.constants import DATASET_ACCESS_URL, SOIL_PROPERTIES
 
 logger = logging.getLogger(__name__)
 
