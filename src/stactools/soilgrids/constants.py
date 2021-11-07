@@ -24,7 +24,7 @@ LICENSE = "CC-BY-4.0"
 LICENSE_LINK = Link(
     rel="license",
     target="https://creativecommons.org/licenses/by/4.0/",
-    title="Creative Commons Attribution 4.0 International"
+    title="Creative Commons Attribution 4.0 International",
 )
 
 DATASET_URL = "https://files.isric.org/soilgrids/latest/data/"
@@ -39,8 +39,8 @@ PROVIDER = Provider(
         ProviderRole.PROCESSOR,
         ProviderRole.PRODUCER,
     ],
-    url=
-    "https://www.isric.org/explore/soilgrids")
+    url="https://www.isric.org/explore/soilgrids",
+)
 
 BOUNDING_BOX = [96.00, -44.00, 168.00, -9.00]
 RELEASE_DATE = date(2020, 5, 1)
@@ -51,14 +51,18 @@ CITATION = "Poggio, L., de Sousa, L. M., Batjes, N. H., Heuvelink, G. B. M., Kem
 SOIL_PROPERTIES = {
     "bdod": "Bulk density of the fine earth fraction (cg/cm³)",
     "cec": "Cation Exchange Capacity of the soil (mmol(c)/kg)",
-    "cfvo": "Volumetric fraction of coarse fragments (> 2 mm) (cm3/dm3 (vol‰))",
-    "clay": "Proportion of clay particles (< 0.002 mm) in the fine earth fraction (g/kg)",
+    "cfvo":
+    "Volumetric fraction of coarse fragments (> 2 mm) (cm3/dm3 (vol‰))",
+    "clay":
+    "Proportion of clay particles (< 0.002 mm) in the fine earth fraction (g/kg)",
     "nitrogen": "Total nitrogen (cg/kg)",
     "ocd": "Organic carbon density (hg/m³)",
     "ocs": "Organic carbon stocks (t/ha)",  # only 0-30cm
     "phh2o": "Soil pH (pHx10)",
-    "sand": "Proportion of sand particles (> 0.05 mm) in the fine earth fraction (g/kg)",
-    "silt": "Proportion of silt particles (≥ 0.002 mm and ≤ 0.05 mm) in the fine earth fraction (g/kg)",
+    "sand":
+    "Proportion of sand particles (> 0.05 mm) in the fine earth fraction (g/kg)",
+    "silt":
+    "Proportion of silt particles (≥ 0.002 mm and ≤ 0.05 mm) in the fine earth fraction (g/kg)",
     "soc": "Soil organic carbon content in the fine earth fraction (dg/kg)",
 }
 DEPTHS = {

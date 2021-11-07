@@ -28,7 +28,10 @@ def process_dataset(
                 with TemporaryDirectory() as tmp_dir:
                     file_name = f"{prop}/{prop}_{depth}_{prob}.vrt"
                     create_tiled_cogs(os.path.join(source, file_name), tmp_dir)
-                    item_path = os.path.join(output_directory, f"{prop}_{depth}_{prob}")
+                    item_path = os.path.join(
+                        output_directory,
+                        f"{prop}_{depth}_{prob}",
+                    )
                     os.makedirs(item_path, exist_ok=True)
                     logger.info(f"Moving assets to {item_path}")
                     for file in os.listdir(tmp_dir):
@@ -36,8 +39,8 @@ def process_dataset(
                         with rasterio.open(file_path, "r") as dataset:
                             if dataset.read().any():
                                 destination = os.path.join(
-                                        item_path,
-                                        file.replace(".vrt", ".tif"),
+                                    item_path,
+                                    file.replace(".vrt", ".tif"),
                                 )
                                 shutil.move(file_path, destination)
 
