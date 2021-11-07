@@ -3,6 +3,7 @@ import os
 import shutil
 from subprocess import CalledProcessError, check_output
 from tempfile import TemporaryDirectory
+from typing import List
 
 import rasterio
 
@@ -16,8 +17,12 @@ from stactools.soilgrids.constants import (
 logger = logging.getLogger(__name__)
 
 
-def process_whole_dataset(source: str, output_directory: str) -> None:
-    for prop in SOIL_PROPERTIES.keys():
+def process_dataset(
+        source: str,
+        output_directory: str,
+        properties: List(str) = SOIL_PROPERTIES.keys(),
+) -> None:
+    for prop in properties:
         for depth in DEPTHS.keys():
             for prob in PROBS.keys():
                 with TemporaryDirectory() as tmp_dir:

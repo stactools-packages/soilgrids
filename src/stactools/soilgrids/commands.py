@@ -1,7 +1,9 @@
 import logging
 import os
+from typing import List
 
 import click
+from soilgrids.src.stactools.soilgrids.constants import SOIL_PROPERTIES
 
 from stactools.soilgrids import cog, stac
 from stactools.soilgrids.constants import DATASET_ACCESS_URL
@@ -50,6 +52,43 @@ def create_soilgrids_command(cli):
         item.save_object(dest_href=destination)
 
     @soilgrids.command(
+        "cogify",
+        short_help="Download data files, tile, and convert to COG",
+    )
+    @click.option(
+        "-s",
+        "--source",
+        required=False,
+        help="URL or path to dataset",
+        default=DATASET_ACCESS_URL,
+    )
+    @click.option(
+        "-d",
+        "--destination",
+        required=True,
+        help="The output directory for the STAC json",
+    )
+    @click.option(
+        "-p",
+        "--property",
+        multiple=True,
+        required=False,
+        help="Property to process, can be passed multiple times",
+        default=SOIL_PROPERTIES.keys(),
+    )
+    def cogify(source: str, destination: str, property: List(str)) -> None:
+        """Creates a STAC Collection and all of its Items and Assets
+        Args:
+            destination (str): Path for the STAC Collection
+            source (str, optional): URL or path to dataset
+            property (str, multiple): Property to process, can be passed multiple times
+        """
+        for p in property:
+            if p not in SOIL_PROPERTIES.keys():
+                raise ValueError("Not a valid soil property: {p}")
+        cog.process_dataset(source, destination, property)
+
+    @soilgrids.command(
         "create-full-collection",
         short_help="Get all data files and create Items and Collection",
     )
@@ -75,7 +114,7 @@ def create_soilgrids_command(cli):
         # collection = stac.create_monthly_collection()
         # collection.normalize_hrefs("./")
         # collection.save(dest_href="./")
-        cog.process_whole_dataset(source, "./")
+        cog.process_dataset(source, "./")
         # for file_name in glob("./*tmin*.tif"):
         #     logger.info(f"Processing {file_name}")
         #     id = stac.create_monthly_item(file_name).id
