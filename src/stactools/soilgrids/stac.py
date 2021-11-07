@@ -101,81 +101,83 @@ def create_item(
     Returns:
         Item: STAC Item object
     """
+    return Item("", {}, BOUNDING_BOX, RELEASE_DATE, {})
 
-    asset_href_relative = None
-    if asset_href and not uri_validator(asset_href):
-        asset_href_relative = os.path.relpath(asset_href, destination)
-    if extent_asset_href and not uri_validator(extent_asset_href):
-        extent_asset_href = os.path.relpath(extent_asset_href, destination)
-    cog_access_href = asset_href  # Make sure cog_access_href exists, even if None
-    if asset_href and asset_href_modifier:
-        cog_access_href = asset_href_modifier(asset_href)
 
-    title = metadata["tiff_metadata"]["dct:title"]
-    description = metadata["description_metadata"]["dct:description"]
+#     asset_href_relative = None
+#     if asset_href and not uri_validator(asset_href):
+#         asset_href_relative = os.path.relpath(asset_href, destination)
+#     if extent_asset_href and not uri_validator(extent_asset_href):
+#         extent_asset_href = os.path.relpath(extent_asset_href, destination)
+#     cog_access_href = asset_href  # Make sure cog_access_href exists, even if None
+#     if asset_href and asset_href_modifier:
+#         cog_access_href = asset_href_modifier(asset_href)
 
-    utc = pytz.utc
+#     title = metadata["tiff_metadata"]["dct:title"]
+#     description = metadata["description_metadata"]["dct:description"]
 
-    year = title.split(" ")[0]
-    dataset_datetime = utc.localize(datetime.strptime(year, "%Y"))
+#     utc = pytz.utc
 
-    end_datetime = dataset_datetime + relativedelta(years=5)
+#     year = title.split(" ")[0]
+#     dataset_datetime = utc.localize(datetime.strptime(year, "%Y"))
 
-    start_datetime = dataset_datetime
-    end_datetime = end_datetime
+#     end_datetime = dataset_datetime + relativedelta(years=5)
 
-    if asset_href is not None:
-        id = os.path.basename(asset_href).replace("_cog",
-                                                  "").replace(".tif", "")
-    else:
-        id = title.replace(" ", "-")
-    cog_geom = get_cog_geom(cog_access_href, metadata)
-    bbox = cog_geom["bbox"]
-    geometry = cog_geom["geometry"]
-    tiled = cog_geom["tiled"]
+#     start_datetime = dataset_datetime
+#     end_datetime = end_datetime
 
-    properties = {
-        "title": title,
-        "description": description,
-    }
+#     if asset_href is not None:
+#         id = os.path.basename(asset_href).replace("_cog",
+#                                                   "").replace(".tif", "")
+#     else:
+#         id = title.replace(" ", "-")
+#     cog_geom = get_cog_geom(cog_access_href, metadata)
+#     bbox = cog_geom["bbox"]
+#     geometry = cog_geom["geometry"]
+#     tiled = cog_geom["tiled"]
 
-    # Create item
-    item = pystac.Item(
-        id=id,
-        geometry=geometry,
-        bbox=bbox,
-        datetime=dataset_datetime,
-        properties=properties,
-        stac_extensions=[],
-    )
+#     properties = {
+#         "title": title,
+#         "description": description,
+#     }
 
-    # It is a good idea to include proj attributes to optimize for libs like stac-vrt
-    proj_attrs = ProjectionExtension.ext(item, add_if_missing=True)
-    proj_attrs.epsg = 4326
-    proj_attrs.bbox = [-180, 90, 180, -90]
-    proj_attrs.shape = [1, 1]  # Raster shape
-    proj_attrs.transform = [-180, 360, 0, 90, 0, 180]  # Raster GeoTransform
+#     # Create item
+#     item = pystac.Item(
+#         id=id,
+#         geometry=geometry,
+#         bbox=bbox,
+#         datetime=dataset_datetime,
+#         properties=properties,
+#         stac_extensions=[],
+#     )
 
-    # Add an asset to the item (COG for example)
-    item.add_asset(
-        "image",
-        Asset(
-            href=asset_href,
-            media_type=MediaType.COG,
-            roles=["data"],
-            title="A dummy STAC Item COG",
-        ),
-    )
-    if start_datetime and end_datetime:
-        item.common_metadata.start_datetime = start_datetime
-        item.common_metadata.end_datetime = end_datetime
+#     # It is a good idea to include proj attributes to optimize for libs like stac-vrt
+#     proj_attrs = ProjectionExtension.ext(item, add_if_missing=True)
+#     proj_attrs.epsg = 4326
+#     proj_attrs.bbox = [-180, 90, 180, -90]
+#     proj_attrs.shape = [1, 1]  # Raster shape
+#     proj_attrs.transform = [-180, 360, 0, 90, 0, 180]  # Raster GeoTransform
 
-    item_projection = ProjectionExtension.ext(item, add_if_missing=True)
-    item_projection.epsg = SOILGRIDS_EPSG
-    item_projection.wkt2 = SOILGRIDS_CRS_WKT
-    if cog_href is not None:
-        item_projection.bbox = cog_geom["cog_bbox"]
-        item_projection.transform = cog_geom["transform"]
-        item_projection.shape = cog_geom["shape"]
+#     # Add an asset to the item (COG for example)
+#     item.add_asset(
+#         "image",
+#         Asset(
+#             href=asset_href,
+#             media_type=MediaType.COG,
+#             roles=["data"],
+#             title="A dummy STAC Item COG",
+#         ),
+#     )
+#     if start_datetime and end_datetime:
+#         item.common_metadata.start_datetime = start_datetime
+#         item.common_metadata.end_datetime = end_datetime
 
-    return item
+#     item_projection = ProjectionExtension.ext(item, add_if_missing=True)
+#     item_projection.epsg = SOILGRIDS_EPSG
+#     item_projection.wkt2 = SOILGRIDS_CRS_WKT
+#     if cog_href is not None:
+#         item_projection.bbox = cog_geom["cog_bbox"]
+#         item_projection.transform = cog_geom["transform"]
+#         item_projection.shape = cog_geom["shape"]
+
+#     return item
