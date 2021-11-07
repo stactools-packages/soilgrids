@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+from typing import Optional
 
 from pystac import (
     Asset,
@@ -8,10 +9,7 @@ from pystac import (
     Collection,
     Extent,
     Item,
-    ItemCollection,
     MediaType,
-    Provider,
-    ProviderRole,
     SpatialExtent,
     TemporalExtent,
 )
@@ -24,25 +22,24 @@ from pystac.extensions.raster import (
     Sampling,
 )
 from pystac.extensions.scientific import ScientificExtension
+from stactools.core.io import ReadHrefModifier
 
 from stactools.soilgrids.constants import (
+    BOUNDING_BOX,
     CITATION,
+    COLLECTION_ID,
+    CRS_WKT,
     DEPTHS,
+    DESCRIPTION,
     DOI,
+    EPSG,
     LICENSE,
     LICENSE_LINK,
     PROBS,
+    PROVIDER,
+    RELEASE_DATE,
     SOIL_PROPERTIES,
-    SOILGRIDS_BOUNDING_BOX,
-    SOILGRIDS_CRS_WKT,
-    SOILGRIDS_DESCRIPTION,
-    SOILGRIDS_END_YEAR,
-    SOILGRIDS_EPSG,
-    SOILGRIDS_ID,
-    SOILGRIDS_PROVIDER,
-    SOILGRIDS_START_YEAR,
-    SOILGRIDS_TITLE,
-    TILE_GEOS,
+    TITLE,
 )
 
 logger = logging.getLogger(__name__)
@@ -60,22 +57,17 @@ def create_collection() -> Collection:
     Returns:
         Collection: STAC Collection object
     """
-    providers = [SOILGRIDS_PROVIDER]
-
-    # Time must be in UTC
-    start_time = datetime.strptime(SOILGRIDS_START_YEAR, '%Y')
-
     extent = Extent(
-        SpatialExtent([SOILGRIDS_BOUNDING_BOX]),
-        TemporalExtent([start_time, None]),
+        SpatialExtent([BOUNDING_BOX]),
+        TemporalExtent([RELEASE_DATE, None]),
     )
 
     collection = Collection(
-        id=SOILGRIDS_ID,
-        title=SOILGRIDS_TITLE,
-        description=SOILGRIDS_DESCRIPTION,
+        id=COLLECTION_ID,
+        title=TITLE,
+        description=DESCRIPTION,
         license=LICENSE,
-        providers=providers,
+        providers=[PROVIDER],
         extent=extent,
         catalog_type=CatalogType.RELATIVE_PUBLISHED,
     )
@@ -83,46 +75,19 @@ def create_collection() -> Collection:
     collection.add_link(LICENSE_LINK)
     collection_proj = ProjectionExtension.summaries(collection,
                                                     add_if_missing=True)
-    collection_proj.epsg = [SOILGRIDS_EPSG]
+    collection_proj.epsg = [EPSG]
 
     collection_sci = ScientificExtension.ext(collection, add_if_missing=True)
     collection_sci.doi = DOI
     collection_sci.citation = CITATION
 
-    items = []
-    for tile_id, tile_goes in TILE_GEOS.items():
-        tile_props = {
-            "title": r"ISRIC Soilgrids Tile ID",
-            "href":
-            f"https://www.isric.org/explore/soilgrid/tiles/{tile_id}.json",
-        }
-        tile_item = Item(id=tile_id,
-                         geometry=tile_goes,
-                         bbox=tile_goes["coordinates"],
-                         datetime=start_time,
-                         properties=tile_props)
-        for soil_type, soil_desc in SOIL_PROPERTIES.items():
-            for depth, depth_desc in DEPTHS.items():
-                for prob, prob_desc in PROBS.items():
-                    tile_item.add_asset(
-                        f"extent-{tile_id}-{depth}-{prob}",
-                        Asset(
-                            href=
-                            "https://www.isric.org/explore/soilgrid/tiles/{tile_id}-{depth}-{prob}.COG",
-                            media_type=MediaType.COG,
-                            roles=["extent"],
-                            title=
-                            f"ISRIC Soilgrids {soil_desc}-{depth_desc}-{prob}: tile {tile_id}",
-                        ))
-        print(tile_item)
-        items.append(tile_item)
-    col_items = ItemCollection(items=items)
-    collection.add_items(col_items)
-
     return collection
 
 
-def create_item(asset_href: str) -> Item:
+def create_item(
+    asset_href: str,
+    asset_href_modifier: Optional[ReadHrefModifier] = None,
+) -> Item:
     """Create a STAC Item a given ISRIC Soilgrids TILE ID, DEPTH and PROB tuple or filename.
 
     This function should include logic to extract all relevant metadata from an
