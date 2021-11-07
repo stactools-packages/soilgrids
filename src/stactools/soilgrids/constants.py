@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from datetime import date
+from datetime import datetime
 
 from pystac import Link, Provider, ProviderRole
 
@@ -43,7 +43,7 @@ PROVIDER = Provider(
 )
 
 BOUNDING_BOX = [96.00, -44.00, 168.00, -9.00]
-RELEASE_DATE = date(2020, 5, 1)
+RELEASE_DATE = datetime(2020, 5, 1)
 
 DOI = "10.5194/soil-7-217-2021"
 CITATION = "Poggio, L., de Sousa, L. M., Batjes, N. H., Heuvelink, G. B. M., Kempen, B., Ribeiro, E., and Rossiter, D.: SoilGrids 2.0: producing soil information for the globe with quantified spatial uncertainty, SOIL, 7, 217–240, 2021."
