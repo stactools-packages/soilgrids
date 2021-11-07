@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def process_dataset(
         source: str,
         output_directory: str,
-        properties: List(str) = SOIL_PROPERTIES.keys(),
+        properties: List[str] = SOIL_PROPERTIES.keys(),
 ) -> None:
     for prop in properties:
         for depth in DEPTHS.keys():

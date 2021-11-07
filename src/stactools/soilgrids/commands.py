@@ -76,7 +76,7 @@ def create_soilgrids_command(cli):
         help="Property to process, can be passed multiple times",
         default=SOIL_PROPERTIES.keys(),
     )
-    def cogify(source: str, destination: str, property: List(str)) -> None:
+    def cogify(source: str, destination: str, property: List[str]) -> None:
         """Creates a STAC Collection and all of its Items and Assets
         Args:
             destination (str): Path for the STAC Collection
