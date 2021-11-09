@@ -9,6 +9,7 @@ import rasterio
 
 from stactools.soilgrids.constants import (
     DEPTHS,
+    OCS_DEPTHS,
     PROBS,
     SOIL_PROPERTIES,
     TILING_PIXEL_SIZE,
@@ -23,7 +24,11 @@ def process_dataset(
         properties: List[str] = SOIL_PROPERTIES.keys(),
 ) -> None:
     for prop in properties:
-        for depth in DEPTHS.keys():
+        if prop == "ocs":
+            depths = OCS_DEPTHS.keys()
+        else:
+            depths = DEPTHS.keys()
+        for depth in depths:
             for prob in PROBS.keys():
                 with TemporaryDirectory() as tmp_dir:
                     file_name = f"{prop}/{prop}_{depth}_{prob}.vrt"

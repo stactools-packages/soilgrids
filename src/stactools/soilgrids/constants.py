@@ -73,6 +73,9 @@ DEPTHS = {
     "60-100cm": "60cm to 100cm Depth",
     "100-200cm": "100cm to 200cm Depth",
 }
+OCS_DEPTHS = {
+    "0-30cm": "Zero to 30cm Depth",
+}
 PROBS = {
     "Q0.05": "5% quantile",
     "Q0.5": "median of the distribution",
