@@ -88,6 +88,30 @@ def create_soilgrids_command(cli):
         cog.process_dataset(source, destination, property)
 
     @soilgrids.command(
+        "organize-cogs",
+        short_help="Copy the COGs into the correct Collection structure.",
+    )
+    @click.option(
+        "-s",
+        "--source",
+        required=True,
+        help="Path to the COG directory",
+    )
+    @click.option(
+        "-d",
+        "--destination",
+        required=True,
+        help="The output directory for the Collection",
+    )
+    def organize_cogs(source: str, destination: str) -> None:
+        """Creates a STAC Collection and all of its Items and Assets
+        Args:
+            destination (str): The output directory for the Collection
+            source (str): Path to the COG directory
+        """
+        cog.organize_cogs(source, destination)
+
+    @soilgrids.command(
         "create-full-collection",
         short_help="Get all data files and create Items and Collection",
     )

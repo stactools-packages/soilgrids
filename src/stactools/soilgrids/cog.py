@@ -1,9 +1,10 @@
 import logging
 import os
+import re
 import shutil
 from subprocess import CalledProcessError, check_output
 from tempfile import TemporaryDirectory
-from typing import List
+from typing import List, Tuple
 
 import rasterio
 
@@ -153,3 +154,42 @@ def create_cog(
             raise
 
     return output_path
+
+
+def get_tile_indices(source: str) -> List[Tuple[int, int]]:
+    first_dir = os.listdir(source)[0]
+    indices = []
+    for file in os.listdir(os.path.join(source, first_dir)):
+        match = re.match(r".*_(\d\d)_(\d\d)\.tif", file)
+        if match is None:
+            raise ValueError(f"Couldn't extract tile indices from {file}")
+        tile1, tile2 = match.groups()
+        indices.append((tile1, tile2))
+    return indices
+
+
+# Copy COGs into the appropriate Collection directory structure
+def organize_cogs(
+    source: str,
+    destination: str,
+) -> None:
+    for i, j in get_tile_indices(source):
+        for prop in SOIL_PROPERTIES.keys():
+            if prop == "ocs":
+                depths = OCS_DEPTHS.keys()
+            else:
+                depths = DEPTHS.keys()
+            for depth in depths:
+                item_dir = os.path.join(
+                    source,
+                    f"{prop}_{depth}_{i}_{j}",
+                )
+                logger.debug(f"Creating item directory {item_dir}")
+                os.makedirs(item_dir, exist_ok=True)
+                for prob in PROBS.keys():
+                    file_dir = f"{prop}_{depth}_{prob}"
+                    file_name = f"{file_dir}_{i}_{j}.tif"
+                    shutil.copy2(
+                        os.path.join(file_dir, file_name),
+                        item_dir,
+                    )
