@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pystac import Link, Provider, ProviderRole
 
-COLLECTION_ID = "SoilGrids"
+COLLECTION_ID = "soilgrids"
 EPSG = 152160
 CRS_WKT = """PROJCS["Homolosine",
     GEOGCS["WGS 84",
