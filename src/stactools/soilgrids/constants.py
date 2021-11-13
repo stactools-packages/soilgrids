@@ -65,6 +65,22 @@ SOIL_PROPERTIES = {
     "Proportion of silt particles (≥ 0.002 mm and ≤ 0.05 mm) in the fine earth fraction (g/kg)",
     "soc": "Soil organic carbon content in the fine earth fraction (dg/kg)",
 }
+UNITS = {
+    "bdod": "cg/cm³",
+    "cec": "mmol(c)/kg",
+    "cfvo": "cm3/dm3 (vol‰)",
+    "clay": "g/kg",
+    "nitrogen": "cg/kg",
+    "ocd": "hg/m³",
+    "ocs": "t/ha",
+    "phh2o": "pH",
+    "sand": "g/kg",
+    "silt": "g/kg",
+    "soc": "dg/kg",
+}
+SCALES = {
+    "phh2o": 0.1,
+}
 DEPTHS = {
     "0-5cm": "Zero to 5cm Depth",
     "5-15cm": "5cm to 15cm Depth",
@@ -85,3 +101,4 @@ PROBS = {
 }
 
 TILING_PIXEL_SIZE = (10000, 10000)
+NO_DATA = -32768

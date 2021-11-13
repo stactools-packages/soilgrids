@@ -37,17 +37,17 @@ def create_soilgrids_command(cli):
         collection.save_object()
 
     @soilgrids.command("create-item", short_help="Create a STAC item")
-    @click.argument("source")
+    @click.argument("source-dir")
     @click.argument("destination")
-    def create_item_command(source: str, destination: str) -> None:
+    def create_item_command(source_dir: str, destination: str) -> None:
         """Creates a STAC Item
 
         Args:
-            source (str): HREF of the Asset associated with the Item
+            source-dir (str): HREF of the Assets associated with the Item
             destination (str): An HREF for the STAC Collection
         """
-        item = stac.create_item(source)
-
+        item = stac.create_item(source_dir)
+        item.validate()
         item.save_object(dest_href=destination)
 
     @soilgrids.command(
