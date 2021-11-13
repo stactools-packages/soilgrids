@@ -17,6 +17,7 @@ indent_size = unset
 
 [{*.json,.ecrc}]
 indent_size = 2
+insert_final_newline = unset
 
 [Makefile]
 indent_style = tab
