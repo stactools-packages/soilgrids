@@ -4,7 +4,7 @@ import re
 import shutil
 from subprocess import CalledProcessError, check_output
 from tempfile import TemporaryDirectory
-from typing import List, Tuple
+from typing import Iterable, List, Tuple
 
 import rasterio
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 def process_dataset(
         source: str,
         output_directory: str,
-        properties: List[str] = SOIL_PROPERTIES.keys(),
+        properties: Iterable[str] = SOIL_PROPERTIES.keys(),
 ) -> None:
     for prop in properties:
         if prop == "ocs":
@@ -156,7 +156,7 @@ def create_cog(
     return output_path
 
 
-def get_tile_indices(source: str) -> List[Tuple[int, int]]:
+def get_tile_indices(source: str) -> List[Tuple[str, str]]:
     first_dir = os.listdir(source)[0]
     indices = []
     for file in os.listdir(os.path.join(source, first_dir)):
