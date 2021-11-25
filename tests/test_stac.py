@@ -1,30 +1,25 @@
+import os
 import unittest
 
 from stactools.soilgrids import stac
+from tests import test_data
 
 
 class StacTest(unittest.TestCase):
     def test_create_collection(self):
-        # Write tests for each for the creation of a STAC Collection
-        # Create the STAC Collection...
         collection = stac.create_collection()
         collection.set_self_href("")
 
-        # Check that it has some required attributes
-        self.assertEqual(collection.id, "my-collection-id")
-        # self.assertEqual(collection.other_attr...
+        # TODO: Stub test, test at least the existence of basic fields and STAC Extensions
+        self.assertEqual(collection.id, "soilgrids250m")
 
-        # Validate
         collection.validate()
 
     def test_create_item(self):
-        # Write tests for each for the creation of STAC Items
-        # Create the STAC Item...
-        item = stac.create_item("/path/to/asset.tif")
+        test_path = test_data.get_path("data-files/cogs")
+        for asset_dir in filter(os.path.isdir, os.listdir(test_path)):
+            item = stac.create_item(asset_dir)
 
-        # Check that it has some required attributes
-        self.assertEqual(item.id, "my-item-id")
-        # self.assertEqual(item.other_attr...
+            # TODO: Stub test, test at least the existence of basic fields and STAC Extensions
 
-        # Validate
-        item.validate()
+            item.validate()
